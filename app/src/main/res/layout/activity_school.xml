@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/LightGrey"
+    tools:context="com.amafuvadze.hwshare.School">
+
+    <android.support.v7.widget.SearchView.SearchAutoComplete
+        android:id="@+id/schoolsearch"
+        android:layout_margin="16dp"
+        android:hint="Enter school name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:layout_centerInParent="true"
+        android:src="@mipmap/school"
+        android:layout_width="300dp"
+        android:layout_height="300dp" />
+
+    <Button
+        android:id="@+id/start_btn"
+        style="@style/start_btn"
+        android:background="@color/DodgerBlue"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
+</RelativeLayout>
