@@ -30,10 +30,9 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
     EditText name, subject, teacher, comment;
     FloatingActionButton add_pic_fab;
     RecyclerView pages_list;
-    TextView pages_count;
+    TextView picture_info;
     SearchView search;
     List<Page> pics;
-    List<ParseObject> pages;
 
     final int CAMERA_RESULT = 1;
     @Override
@@ -54,11 +53,11 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
         comment = (EditText) findViewById(R.id.comment);
         add_pic_fab = (FloatingActionButton) findViewById(R.id.hw_add_fab);
         pages_list = (RecyclerView) findViewById(R.id.pages_list);
-        pages_count = (TextView) findViewById(R.id.pages);
+        picture_info = (TextView) findViewById(R.id.pages);
         pics = new ArrayList<Page>();
         search = (SearchView) findViewById(R.id.file_search);
 
-        pages_count.setText("No pages uploaded :(");
+        picture_info.setText("No pages uploaded :(");
         search.setVisibility(View.GONE);
     }
 
@@ -96,9 +95,9 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
         search.setVisibility(View.VISIBLE);
 
         if(pics.size() == 1){
-            pages_count.setText(pics.size() + " page");
+            picture_info.setText(pics.size() + " page");
         }else {
-            pages_count.setText(pics.size() + " pages");
+            picture_info.setText(pics.size() + " pages");
         }
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -134,23 +133,81 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
         return post;
     }
 
-    private void saveData(String name){
-        /*
-        //ParseObject[] assignments = new ParseObject[pics.size()];
-       // for(int i = 0; i < pics.size(); i++){
-        //    assignments[i] = getParseObjectData(pics.get(i).getImage(), i);
-        //}
+    private void saveData(){
+        String name = this.name.getText().toString();
+        String subject = this.subject.getText().toString();
+        String teacher = this.teacher.getText().toString();
+        String comment = this.comment.getText().toString();
+        String school = School.school_name;
+        ParseFile[] images = new ParseFile[pics.size()];
+        images = getImageArray();
+
+        if(!validateInput(name, teacher, subject)){
+            return;
+        }
 
         ParseObject post = new ParseObject("Posts");
-        post.add(name + School.school_name, assignments);
+        post.add("name", name);
+        post.add("teacher", teacher);
+        post.add("subject", subject);
+        post.add("school", school);
+        post.add("date", new Date().toString());
+        post.add("images", images);
+        if(!comment.trim().equals("")){
+            post.add("comment", comment);
+        }
+
         post.saveInBackground(this);
-        showToast("saved");
-        */
+    }
+
+    private ParseFile[] getImageArray(){
+        ParseFile[] images = new ParseFile[pics.size()];
+        for(int i = 0; i < pics.size(); i++){
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            pics.get(i).getImage().compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] data = stream.toByteArray();
+
+            ParseFile imageFile = new ParseFile(pics.get(i).getAssignment_name().replace(" ", "_") + (i + 1) + " .png", data);
+            images[i] = imageFile;
+        }
+
+        return images;
+    }
+
+    private boolean validateInput(String name, String teacher, String subject){
+        if(name.trim().equals("")){
+            this.name.setError("required");
+            return false;
+        }else{
+            this.name.setError(null);
+        }
+
+        if(subject.trim().equals("")){
+            this.subject.setError("required");
+            return false;
+        }else{
+            this.subject.setError(null);
+        }
+
+        if(teacher.trim().equals("")){
+            this.teacher.setError("required");
+            return false;
+        }else{
+            this.teacher.setError(null);
+        }
+
+        if(pics.size() == 0){
+            picture_info.setError("attach at least 1 picture");
+        }
+
+        return true;
     }
 
     @Override
     public void done(ParseException e) {
-        showToast(e.getMessage());
+        if(!(e == null)) {
+            showToast(e.getMessage());
+        }
     }
 
     @Override
@@ -186,7 +243,7 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
         }
 
         if(id == R.id.menu_save){
-            saveData(name.getText().toString());
+            saveData();
         }
 
         return super.onOptionsItemSelected(item);
