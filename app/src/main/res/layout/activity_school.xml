@@ -6,7 +6,7 @@
     android:background="@color/LightGrey"
     tools:context="com.amafuvadze.hwshare.School">
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/schoolsearch"
         android:layout_margin="16dp"
         android:hint="Enter school name"
