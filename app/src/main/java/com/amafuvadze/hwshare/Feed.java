@@ -1,16 +1,22 @@
 package com.amafuvadze.hwshare;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class Feed extends AppCompatActivity {
+import com.parse.Parse;
 
+public class Feed extends AppCompatActivity implements View.OnClickListener {
+
+    FloatingActionButton add_fab;
+    RecyclerView post_list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,14 +24,24 @@ public class Feed extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        Parse.enableLocalDatastore(this);
+        Parse.initialize(this, "Vyvz56RWj3h0BSdJWZdC81OsJSzp0H1NmnbGbNYK", "PDTV79SKssCQT6uM9wzRbZnTqKEuqpHc5uwdoHtB");
+
+        add_fab = (FloatingActionButton) findViewById(R.id.add_fab);
+        post_list = (RecyclerView) findViewById(R.id.feed_list);
+
+        add_fab.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.add_fab:
+                Intent intent = new Intent(this, Post.class);
+                startActivity(intent);
+                break;
+        }
     }
 
     @Override

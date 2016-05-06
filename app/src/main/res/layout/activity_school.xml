@@ -6,7 +6,7 @@
     android:background="@color/LightGrey"
     tools:context="com.amafuvadze.hwshare.School">
 
-    <android.support.v7.widget.SearchView.SearchAutoComplete
+    <EditText
         android:id="@+id/schoolsearch"
         android:layout_margin="16dp"
         android:hint="Enter school name"
@@ -16,8 +16,8 @@
     <ImageView
         android:layout_centerInParent="true"
         android:src="@mipmap/school"
-        android:layout_width="300dp"
-        android:layout_height="300dp" />
+        android:layout_width="270dp"
+        android:layout_height="270dp" />
 
     <Button
         android:id="@+id/start_btn"

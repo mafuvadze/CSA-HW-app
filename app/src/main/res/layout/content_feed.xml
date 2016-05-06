@@ -8,5 +8,9 @@
     tools:context="com.amafuvadze.hwshare.Feed"
     tools:showIn="@layout/activity_feed">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/feed_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>

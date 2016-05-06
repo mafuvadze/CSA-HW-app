@@ -1,23 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="100dp"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/image"
-        android:src="@color/purple"
-        android:layout_width="90dp"
-        android:layout_height="120dp" />
-
-    <TextView
-        android:id="@+id/name"
-        android:layout_below="@+id/image"
-        android:layout_width="90dp"
+    <android.support.v7.widget.CardView
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:textSize="16sp"
-        android:textColor="@color/DodgerBlue"
-        style="@style/Base.TextAppearance.AppCompat.Caption"
-        android:text="Assignment name"/>
+        android:layout_margin="4dp">
+
+        <RelativeLayout
+            android:layout_width="100dp"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/page_image"
+                android:layout_width="90dp"
+                android:layout_height="135dp"
+                android:layout_centerHorizontal="true"
+                android:src="@color/purple" />
+
+            <TextView
+                android:id="@+id/page_name"
+                android:gravity="center_horizontal"
+                style="@style/Base.TextAppearance.AppCompat.Caption"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/page_image"
+                android:layout_centerHorizontal="true"
+                android:maxLines="1"
+                android:text="page 1"
+                android:textColor="@color/DodgerBlue"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
 
 </RelativeLayout>
