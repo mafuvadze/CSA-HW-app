@@ -1,7 +1,11 @@
 package com.amafuvadze.hwshare;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,7 +15,9 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,22 +31,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Post extends AppCompatActivity implements View.OnClickListener, SaveCallback{
+public class Post extends AppCompatActivity implements View.OnClickListener, SaveCallback, AdapterView.OnItemLongClickListener{
 
     EditText name, subject, teacher, comment;
-    FloatingActionButton add_pic_fab;
     RecyclerView pages_list;
+    ImageView cam_btn, gallery_btn;
     TextView picture_info;
     SearchView search;
-    List<Page> pics;
+    public static List<Page> pics;
 
     final int CAMERA_RESULT = 1;
+    final int GALLERY_RESULT = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        getSupportActionBar().setTitle("Post assignment");
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         initUi();
         initListeners();
@@ -51,23 +58,32 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
         subject = (EditText) findViewById(R.id.subject);
         teacher = (EditText) findViewById(R.id.teacher);
         comment = (EditText) findViewById(R.id.comment);
-        add_pic_fab = (FloatingActionButton) findViewById(R.id.hw_add_fab);
         pages_list = (RecyclerView) findViewById(R.id.pages_list);
         picture_info = (TextView) findViewById(R.id.pages);
         pics = new ArrayList<Page>();
         search = (SearchView) findViewById(R.id.file_search);
+        cam_btn = (ImageView) findViewById(R.id.cam_btn);
+        gallery_btn = (ImageView) findViewById(R.id.gallery_btn);
 
-        picture_info.setText("No pages uploaded :(");
+        picture_info.setText("No pages uploaded");
         search.setVisibility(View.GONE);
     }
 
     private void initListeners(){
-        add_pic_fab.setOnClickListener(this);
+        cam_btn.setOnClickListener(this);
+        gallery_btn.setOnClickListener(this);
     }
 
     private void takePicture(){
         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, CAMERA_RESULT);
+    }
+
+    private void selectImageFromGallery(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_RESULT);
     }
 
     @Override
@@ -83,6 +99,22 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
                 }catch(Exception ex){
                     showToast(ex.toString());
                 }
+            }
+        }else if(requestCode == GALLERY_RESULT){
+            if(resultCode == RESULT_OK){
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+                Cursor cursor = getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                cursor.close();
+
+                Bitmap image = BitmapFactory.decodeFile(picturePath);
+                addPic(image);
             }
         }
     }
@@ -104,33 +136,7 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         pages_list.setLayoutManager(layoutManager);
         RVAdapter adapter = new RVAdapter(pics, this);
-        showToast(pics.size() + "");
         pages_list.setAdapter(adapter);
-        //getParseObjectData(image, pics.size() - 1);
-    }
-
-    private ParseObject getParseObjectData(Bitmap image, int index){
-        String teacher = this.teacher.getText().toString();
-        String subject = this.subject.getText().toString();
-        String name = this.name.getText().toString();
-        String comment = this.comment.getText().toString();
-
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] bytearray = stream.toByteArray();
-        ParseFile file = new ParseFile(String.format("%s_%d", name, (index + 1)), bytearray);
-
-        ParseObject post = new ParseObject(name + School.school_name);
-        post.add("name", name);
-        post.add("teacher", teacher);
-        post.add("subject", subject);
-        post.add("comment", comment);
-        post.add("image", file);
-
-        //post.saveInBackground(this);
-        //showToast("saved");
-
-        return post;
     }
 
     private void saveData(){
@@ -197,7 +203,8 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
         }
 
         if(pics.size() == 0){
-            picture_info.setError("attach at least 1 picture");
+            picture_info.setText("attach at least 1 picture");
+            return false;
         }
 
         return true;
@@ -213,8 +220,11 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.hw_add_fab:
+            case R.id.cam_btn:
                 takePicture();
+                break;
+            case R.id.gallery_btn:
+                selectImageFromGallery();
                 break;
         }
     }
@@ -246,7 +256,15 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
             saveData();
         }
 
+        if(id == R.id.home){
+            onBackPressed();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        return false;
+    }
 }

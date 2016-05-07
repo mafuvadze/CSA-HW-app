@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="135dp"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/open_opt"
+        android:layout_width="match_parent"
+        android:layout_height="45dp">
+
+        <ImageView
+            android:id="@+id/open_img"
+            android:src="@mipmap/ic_open"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="3dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
+
+        <TextView
+            android:layout_marginTop="14dp"
+            android:layout_marginLeft="2dp"
+            android:textSize="15sp"
+            android:layout_toRightOf="@+id/open_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Open"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/back_opt"
+        android:layout_marginTop="1dp"
+        android:layout_width="match_parent"
+        android:layout_height="45dp">
+
+        <ImageView
+            android:id="@+id/redo_img"
+            android:src="@mipmap/ic_redo"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="3dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
+
+        <TextView
+            android:layout_marginTop="14dp"
+            android:layout_marginLeft="2dp"
+            android:textSize="15sp"
+            android:layout_toRightOf="@+id/redo_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/delete_opt"
+        android:layout_marginTop="1dp"
+        android:layout_width="match_parent"
+        android:layout_height="45dp">
+
+        <ImageView
+            android:id="@+id/delete_img"
+            android:src="@mipmap/ic_delete"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="3dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
+
+        <TextView
+            android:layout_marginTop="14dp"
+            android:layout_marginLeft="2dp"
+            android:textSize="15sp"
+            android:layout_toRightOf="@+id/delete_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"/>
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

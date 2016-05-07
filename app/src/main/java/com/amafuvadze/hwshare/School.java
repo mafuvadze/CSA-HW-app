@@ -43,7 +43,6 @@ public class School extends AppCompatActivity implements View.OnClickListener{
             school_list.add(in.nextLine());
         }
 
-        Toast.makeText(getBaseContext(), school_list.size() + "", Toast.LENGTH_LONG).show();
         school_search.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, getArray(school_list)));
     }
 

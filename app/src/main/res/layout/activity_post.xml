@@ -10,12 +10,4 @@
 
     <include layout="@layout/content_post" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/hw_add_fab"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="8dp"
-        android:src="@android:drawable/ic_menu_camera" />
-
 </android.support.design.widget.CoordinatorLayout>
