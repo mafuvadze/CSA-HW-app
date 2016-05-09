@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class VPAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         View view = LayoutInflater.from(context).inflate(R.layout.view_image_template, container, false);
         ImageView image = (ImageView) view.findViewById(R.id.image);
+
         image.setImageBitmap(images.get(position).getImage());
 
         container.addView(view);

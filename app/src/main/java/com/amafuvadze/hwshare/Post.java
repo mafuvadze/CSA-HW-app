@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -39,6 +40,7 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
     TextView picture_info;
     SearchView search;
     public static List<Page> pics;
+    public static int current_position;
 
     final int CAMERA_RESULT = 1;
     final int GALLERY_RESULT = 2;
@@ -131,6 +133,7 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
         }else {
             picture_info.setText(pics.size() + " pages");
         }
+        picture_info.setTextColor(Color.GREEN);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -145,8 +148,8 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
         String teacher = this.teacher.getText().toString();
         String comment = this.comment.getText().toString();
         String school = School.school_name;
-        ParseFile[] images = new ParseFile[pics.size()];
-        images = getImageArray();
+        ParseObject images;
+        images = getImagesObj();
 
         if(!validateInput(name, teacher, subject)){
             return;
@@ -166,17 +169,18 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
         post.saveInBackground(this);
     }
 
-    private ParseFile[] getImageArray(){
-        ParseFile[] images = new ParseFile[pics.size()];
+    private ParseObject getImagesObj(){
+        ParseObject images = new ParseObject("pics");
         for(int i = 0; i < pics.size(); i++){
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             pics.get(i).getImage().compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] data = stream.toByteArray();
 
             ParseFile imageFile = new ParseFile(pics.get(i).getAssignment_name().replace(" ", "_") + (i + 1) + " .png", data);
-            images[i] = imageFile;
+            images.add(i + "", imageFile);
         }
 
+        images.saveInBackground();
         return images;
     }
 
@@ -204,6 +208,7 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
 
         if(pics.size() == 0){
             picture_info.setText("attach at least 1 picture");
+            picture_info.setTextColor(Color.RED);
             return false;
         }
 

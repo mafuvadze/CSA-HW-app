@@ -42,4 +42,22 @@ public class Page {
     public void setDate_posted(Date date_posted) {
         this.date_posted = date_posted;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Page){
+            if(((Page) o).getImage() == this.getImage()){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getImage().hashCode();
+    }
 }

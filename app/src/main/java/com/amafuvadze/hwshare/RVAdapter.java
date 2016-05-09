@@ -32,15 +32,14 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
     public static class PersonViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener
     {
 
-        TextView name;
         ImageView image;
         FrameLayout wrapper;
         Context context;
         View view;
+        Bitmap img;
 
         PersonViewHolder(View itemView, Context context) {
             super(itemView);
-            name = (TextView) itemView.findViewById(R.id.page_name);
             image = (ImageView) itemView.findViewById(R.id.page_image);
             wrapper = (FrameLayout) itemView.findViewById(R.id.frame);
 
@@ -53,6 +52,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         public boolean onLongClick(View v) {
             view = LayoutInflater.from(context).inflate(R.layout.quick_options_pic, null, false);
             wrapper.addView(view);
+
+            img =  ((BitmapDrawable)image.getDrawable()).getBitmap();
+            image.setImageBitmap(ImageEffects.blurRenderScript(context, img, 20));
 
             RelativeLayout open, back, delete;
             open = (RelativeLayout) view.findViewById(R.id.open_opt);
@@ -77,15 +79,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
                     break;
                 case R.id.back_opt:
                     wrapper.removeView(view);
+                    image.setImageBitmap(img);
                     break;
             }
-        }
-
-        private byte[] toByteArray(Bitmap image){
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            image.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byte[] byteArray = stream.toByteArray();
-            return byteArray;
         }
     }
 
@@ -108,9 +104,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
     public void onBindViewHolder(RVAdapter.PersonViewHolder holder, int position)
     {
         Page page = pages.get(position);
-        holder.name.setText("");
         holder.image.setImageBitmap(page.getImage());
-
     }
 
     @Override
