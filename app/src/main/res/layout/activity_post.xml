@@ -6,6 +6,7 @@
     android:background="@color/LightGrey"
     android:fitsSystemWindows="true"
     android:padding="4dp"
+    android:id="@+id/parent"
     tools:context="com.amafuvadze.hwshare.Post">
 
     <include layout="@layout/content_post" />

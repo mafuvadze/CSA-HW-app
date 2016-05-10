@@ -1,5 +1,6 @@
 package com.amafuvadze.hwshare;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -8,6 +9,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +21,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,10 +43,11 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
     TextView picture_info;
     SearchView search;
     public static List<Page> pics;
-    public static int current_position;
 
     final int CAMERA_RESULT = 1;
     final int GALLERY_RESULT = 2;
+
+    ProgressDialog progress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,9 +70,12 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
         search = (SearchView) findViewById(R.id.file_search);
         cam_btn = (ImageView) findViewById(R.id.cam_btn);
         gallery_btn = (ImageView) findViewById(R.id.gallery_btn);
+        progress = new ProgressDialog(this);
 
         picture_info.setText("No pages uploaded");
         search.setVisibility(View.GONE);
+        progress.setTitle("Uploading assignment...");
+        progress.setCancelable(false);
     }
 
     private void initListeners(){
@@ -133,7 +140,7 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
         }else {
             picture_info.setText(pics.size() + " pages");
         }
-        picture_info.setTextColor(Color.GREEN);
+        picture_info.setTextColor(getResources().getColor(R.color.green));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -148,40 +155,37 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
         String teacher = this.teacher.getText().toString();
         String comment = this.comment.getText().toString();
         String school = School.school_name;
-        ParseObject images;
-        images = getImagesObj();
+        saveImages();
 
         if(!validateInput(name, teacher, subject)){
             return;
         }
 
-        ParseObject post = new ParseObject("Posts");
+        ParseObject post = new ParseObject(School.school_name);
         post.add("name", name);
         post.add("teacher", teacher);
         post.add("subject", subject);
         post.add("school", school);
         post.add("date", new Date().toString());
-        post.add("images", images);
         if(!comment.trim().equals("")){
             post.add("comment", comment);
         }
 
         post.saveInBackground(this);
+        showProgressBar();
     }
 
-    private ParseObject getImagesObj(){
-        ParseObject images = new ParseObject("pics");
+    private void saveImages(){
         for(int i = 0; i < pics.size(); i++){
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             pics.get(i).getImage().compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] data = stream.toByteArray();
 
-            ParseFile imageFile = new ParseFile(pics.get(i).getAssignment_name().replace(" ", "_") + (i + 1) + " .png", data);
-            images.add(i + "", imageFile);
+            ParseFile imageFile = new ParseFile(School.school_name.replace(" ", "_")
+                    + pics.get(i).getAssignment_name()
+                    .replace(" ", "_") + (i + 1) + " .png", data);
+            imageFile.saveInBackground();
         }
-
-        images.saveInBackground();
-        return images;
     }
 
     private boolean validateInput(String name, String teacher, String subject){
@@ -215,11 +219,21 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
         return true;
     }
 
+    private void showProgressBar(){
+        progress.show();
+    }
+
+    private void hideProgressBar(){
+        progress.dismiss();
+    }
+
     @Override
     public void done(ParseException e) {
         if(!(e == null)) {
             showToast(e.getMessage());
         }
+        hideProgressBar();
+        showSnack("Assignment saved");
     }
 
     @Override
@@ -236,6 +250,10 @@ public class Post extends AppCompatActivity implements View.OnClickListener, Sav
 
     private void showToast(String msg){
         Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
+    }
+
+    private void showSnack(String msg){
+        Snackbar.make(findViewById(R.id.parent), msg, Snackbar.LENGTH_LONG).show();
     }
 
     @Override

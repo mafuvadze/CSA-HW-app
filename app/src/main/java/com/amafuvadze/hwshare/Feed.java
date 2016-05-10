@@ -1,5 +1,6 @@
 package com.amafuvadze.hwshare;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,13 +11,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
+import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
-public class Feed extends AppCompatActivity implements View.OnClickListener {
+import java.util.List;
+
+public class Feed extends AppCompatActivity implements View.OnClickListener, FindCallback<ParseObject> {
 
     FloatingActionButton add_fab;
-    RecyclerView post_list;
+    ListView post_list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,9 +37,16 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
         Parse.initialize(this, "Vyvz56RWj3h0BSdJWZdC81OsJSzp0H1NmnbGbNYK", "PDTV79SKssCQT6uM9wzRbZnTqKEuqpHc5uwdoHtB");
 
         add_fab = (FloatingActionButton) findViewById(R.id.add_fab);
-        post_list = (RecyclerView) findViewById(R.id.feed_list);
+        post_list = (ListView) findViewById(R.id.feed);
 
+        getPostsFromSchool();
         add_fab.setOnClickListener(this);
+
+    }
+
+    private void getPostsFromSchool(){
+        ParseQuery query = new ParseQuery(School.school_name);
+        query.findInBackground(this);
 
     }
 
@@ -42,6 +58,12 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
                 startActivity(intent);
                 break;
         }
+    }
+
+    @Override
+    public void done(List<ParseObject> objects, ParseException e) {
+        LVAdapter adapter = new LVAdapter(this, R.layout.post_template, objects);
+        post_list.setAdapter(adapter);
     }
 
     @Override

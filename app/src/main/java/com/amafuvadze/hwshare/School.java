@@ -59,7 +59,8 @@ public class School extends AppCompatActivity implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.start_btn:
-                school_name = school_search.getText().toString();
+                school_name = school_search.getText().toString().replace(" ", "_");
+                school_name = school_name.substring(0, school_name.indexOf("("));
                 Intent intent = new Intent(getBaseContext(), Feed.class);
                 startActivity(intent);
         }
